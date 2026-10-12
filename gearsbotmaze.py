@@ -23,28 +23,32 @@ btn = Button()
 radio = Radio()
 obtr = ObjectTracker()
 
-color_sensor_in1 = ColorSensor(INPUT_1)
-ultrasonic_sensor_in2 = UltrasonicSensor(INPUT_2)
-gyro_sensor_in3 = GyroSensor(INPUT_3)
-gps_sensor_in4 = GPSSensor(INPUT_4)
-pen_in5 = Pen(INPUT_5)
+color_sensor = ColorSensor(INPUT_1)
+ultrasonic_sensor = UltrasonicSensor(INPUT_2)
+gyro_sensor = GyroSensor(INPUT_3)
+gps_sensor = GPSSensor(INPUT_4)
+pen = Pen(INPUT_5)
 
 motorC = LargeMotor(OUTPUT_C) # Magnet
 
 # Here is where your code starts
 
-# Describe this function...
-def turnRight():
+def Turn(degrees):
+    global direction, distance, directionError
+    pv = gyro_sensor.angle
+    sp = degrees + pv
+    for count in range(300):
+        pv = gyro_sensor.angle
+        error = sp - pv
+        error = min(max(error, -100), 100)
+        tank_drive.on(error, (-1 * error))
     tank_drive.off(brake=True)
-    tank_drive.on(SpeedDPS(90), SpeedDPS((-90)))
 
-# Describe this function...
-def driveUntilWall():
-    tank_drive.on(20, 20)
-
+def drive():
+    tank_drive.on(25, 25)
 
 while True:
-    if ultrasonic_sensor_in2.distance_centimeters <= 10:
-        turnRight()
+    if ultrasonic_sensor.distance_centimeters <= 25:
+        Turn(90)
     else:
-        driveUntilWall()
+        drive()
